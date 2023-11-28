@@ -1,4 +1,5 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime as dt
+from datetime import timedelta as td
 
 
 def get_birthdays_per_week(users):
@@ -7,7 +8,8 @@ def get_birthdays_per_week(users):
 
     cur_date = date.today()
     cur_week_day = cur_date.weekday()
-    week_days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    week_days = ["Monday", "Tuesday", "Wednesday", "Thursday",
+                 "Friday", "Saturday", "Sunday"]
 
     res = {}
     # Якщо ми починаємо з понеділка, зсуваємо перевірку на 2 дні назад
@@ -16,19 +18,19 @@ def get_birthdays_per_week(users):
     # Обробляємо users в циклі for
     for user in users:
         # Дата народження користувача в цьому році
-        next_birthday = user['birthday'].replace(year=cur_date.year)
+        n_birth = user['birthday'].replace(year=cur_date.year)
 
-        # Якщо день народження вже минув у цьому році, то переносимо його на наступний рік
-        if next_birthday < cur_date:
-            next_birthday = next_birthday.replace(year=cur_date.year+1)
+        # Якщо день народження вже минув, переносимо його на наступний рік
+        if n_birth < cur_date:
+            n_birth = n_birth.replace(year=cur_date.year+1)
 
         # Перевірка чи день народження входить в діапазон нашої тижня
-        if (cur_date-timedelta(days=i1)) <= next_birthday <= (cur_date+timedelta(days=i2)):
-            user_week_day = week_days[next_birthday.weekday()]
+        if (cur_date-td(days=i1)) <= n_birth <= (cur_date+td(days=i2)):
+            user_week_day = week_days[n_birth.weekday()]
             res.setdefault(user_week_day, [])
             res[user_week_day].append(user['name'])
 
-    # Якщо день народження випав на вихідний, додаємо його в наступний після них понеділок
+    # Якщо день народження випав на вихідний, переносимо на понеділок
     for d, n in res.items():
         if d in ("Saturday", "Sunday"):
             res.setdefault("Monday", [])
@@ -42,7 +44,7 @@ def get_birthdays_per_week(users):
 
 if __name__ == "__main__":
     users = [
-        {"name": "Jan Koum", "birthday": datetime(1976, 1, 1).date()},
+        {"name": "Jan Koum", "birthday": dt(2019, 11, 29).date()},
     ]
 
     result = get_birthdays_per_week(users)
